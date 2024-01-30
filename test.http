@@ -1,0 +1,34 @@
+curl http://localhost:8080/greeting?name=ODDS
+
+###
+
+GET http://localhost:8080/hello/odds
+
+###
+POST http://localhost:8080/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiT0REUyIsImV4cCI6MTcwNjYwNzYxNX0.GXzQwLHI983mwSKLKSAcK74X_cGIv6nIVT_hTcrtAdk
+
+{
+  "name": "Odds"
+}
+
+###
+GET http://localhost:8080/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoiT0REUyIsImV4cCI6MTcwNjYxMTc0Mn0.9I_vaT9qDSrVwU0H6BmJS1oBqc3qgyfWZNcuVbc8jMk
+
+
+###
+DELETE http://localhost:8080/users/2
+
+### 
+
+PATCH http://localhost:8080/users/3
+Content-Type: application/json
+
+{
+  "name": ""
+}
+
+###
+GET http://localhost:8080/tokenz
