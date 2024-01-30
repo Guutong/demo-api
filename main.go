@@ -40,7 +40,8 @@ func main() {
 	r.GET("/tokenz", auth.GetToken(os.Getenv("WIFI_SECRET")))
 	authRoute := r.Group("", auth.AuthMiddleware(os.Getenv("WIFI_SECRET")))
 
-	userHandler := user.NewUserHandler(db)
+	userRepository := user.NewUserRepository(db)
+	userHandler := user.NewUserHandler(userRepository)
 	authRoute.POST("/users", userHandler.NewUser)
 	authRoute.GET("/users", userHandler.GetUser)
 	authRoute.DELETE("/users/:id", userHandler.DeleteUser)

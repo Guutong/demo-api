@@ -6,21 +6,14 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
-type User struct {
-	gorm.Model
-
-	Name string `json:"name" binding:"required"`
-}
-
 type UserHandler struct {
-	db *gorm.DB
+	repo IUserRepository
 }
 
-func NewUserHandler(db *gorm.DB) *UserHandler {
-	return &UserHandler{db: db}
+func NewUserHandler(store IUserRepository) *UserHandler {
+	return &UserHandler{repo: store}
 }
 
 func (uh *UserHandler) NewUser(c *gin.Context) {
@@ -33,8 +26,8 @@ func (uh *UserHandler) NewUser(c *gin.Context) {
 		return
 	}
 
-	r := uh.db.Create(&u)
-	if err := r.Error; err != nil {
+	err = uh.repo.NewUser(&u)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -47,13 +40,11 @@ func (uh *UserHandler) NewUser(c *gin.Context) {
 }
 
 func (uh *UserHandler) GetUser(c *gin.Context) {
-	var users []User
-
 	ctxName := c.GetString("Name")
 	fmt.Println(ctxName)
 
-	r := uh.db.Find(&users)
-	if err := r.Error; err != nil {
+	users, err := uh.repo.GetUser()
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -74,8 +65,8 @@ func (uh *UserHandler) DeleteUser(c *gin.Context) {
 		return
 	}
 
-	r := uh.db.Delete(&User{}, idInt)
-	if err := r.Error; err != nil {
+	err = uh.repo.DeleteUser(idInt)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -105,8 +96,8 @@ func (uh *UserHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	r := uh.db.Model(&User{}).Where("id = ?", idInt).Update("name", u.Name)
-	if err := r.Error; err != nil {
+	err = uh.repo.UpdateUser(idInt, &u)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
