@@ -11,4 +11,9 @@ services:
       POSTGRES_DB: demo
     volumes:
       - ./volumes/postgres/data:/var/lib/postgresql/data
-
+  guutong:
+    image: api
+    ports:
+      - 8080:8080
+    volumes:
+      - ./.env:/.env
