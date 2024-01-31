@@ -3,9 +3,6 @@ package user
 import (
 	"fmt"
 	"net/http"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
 )
 
 type UserHandler struct {
@@ -16,11 +13,11 @@ func NewUserHandler(store IUserRepository) *UserHandler {
 	return &UserHandler{repo: store}
 }
 
-func (uh *UserHandler) NewUser(c *gin.Context) {
+func (uh *UserHandler) NewUser(c IContext) {
 	var u User
-	err := c.ShouldBindJSON(&u)
+	err := c.BindJSON(&u)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"error": err.Error(),
 		})
 		return
@@ -28,82 +25,80 @@ func (uh *UserHandler) NewUser(c *gin.Context) {
 
 	err = uh.repo.NewUser(&u)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"error": err.Error(),
 		})
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Hello " + u.Name,
-		"id":      u.Model.ID,
+		"id":      u.ID,
 	})
 }
 
-func (uh *UserHandler) GetUser(c *gin.Context) {
-	ctxName := c.GetString("Name")
+func (uh *UserHandler) GetUser(c IContext) {
+	ctxName := c.Name()
 	fmt.Println(ctxName)
 
 	users, err := uh.repo.GetUser()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"error": err.Error(),
 		})
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	c.JSON(http.StatusOK, map[string]interface{}{
 		"users": users,
 	})
 }
 
-func (uh *UserHandler) DeleteUser(c *gin.Context) {
-	id := c.Param("id")
-	idInt, err := strconv.Atoi(id)
+func (uh *UserHandler) DeleteUser(c IContext) {
+	id, err := c.ParamInt("id")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"error": "can not parse id",
 		})
 		return
 	}
 
-	err = uh.repo.DeleteUser(idInt)
+	err = uh.repo.DeleteUser(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"error": err.Error(),
 		})
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Deleted!",
 	})
 }
 
-func (uh *UserHandler) UpdateUser(c *gin.Context) {
-	id := c.Param("id")
-	idInt, err := strconv.Atoi(id)
+func (uh *UserHandler) UpdateUser(c IContext) {
+	id, err := c.ParamInt("id")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"error": "can not parse id",
 		})
 		return
 	}
 
 	var u User
-	err = c.ShouldBindJSON(&u)
+	err = c.BindJSON(&u)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	err = uh.repo.UpdateUser(idInt, &u)
+	err = uh.repo.UpdateUser(id, &u)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"error": err.Error(),
 		})
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Updated!",
 	})
 }

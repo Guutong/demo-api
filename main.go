@@ -42,10 +42,10 @@ func main() {
 
 	userRepository := user.NewUserRepository(db)
 	userHandler := user.NewUserHandler(userRepository)
-	authRoute.POST("/users", userHandler.NewUser)
-	authRoute.GET("/users", userHandler.GetUser)
-	authRoute.DELETE("/users/:id", userHandler.DeleteUser)
-	authRoute.PATCH("/users/:id", userHandler.UpdateUser)
+	authRoute.POST("/users", user.NewGinHandler(userHandler.NewUser))
+	authRoute.GET("/users", user.NewGinHandler(userHandler.GetUser))
+	authRoute.DELETE("/users/:id", user.NewGinHandler(userHandler.DeleteUser))
+	authRoute.PATCH("/users/:id", user.NewGinHandler(userHandler.UpdateUser))
 
 	r.Run()
 }
