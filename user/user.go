@@ -5,12 +5,22 @@ import (
 	"net/http"
 )
 
+type IContext interface {
+	BindJSON(interface{}) error
+	JSON(int, interface{})
+	Param(string) string
+	ParamInt(string) (int, error)
+
+	// from middleware
+	Name() string
+}
+
 type UserHandler struct {
 	repo IUserRepository
 }
 
-func NewUserHandler(store IUserRepository) *UserHandler {
-	return &UserHandler{repo: store}
+func NewUserHandler(repo IUserRepository) *UserHandler {
+	return &UserHandler{repo: repo}
 }
 
 func (uh *UserHandler) NewUser(c IContext) {

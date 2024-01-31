@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/guutong/demo-gin/auth"
+	"github.com/guutong/demo-gin/router"
 	"github.com/guutong/demo-gin/user"
 )
 
@@ -42,10 +43,10 @@ func main() {
 
 	userRepository := user.NewUserRepository(db)
 	userHandler := user.NewUserHandler(userRepository)
-	authRoute.POST("/users", user.NewGinHandler(userHandler.NewUser))
-	authRoute.GET("/users", user.NewGinHandler(userHandler.GetUser))
-	authRoute.DELETE("/users/:id", user.NewGinHandler(userHandler.DeleteUser))
-	authRoute.PATCH("/users/:id", user.NewGinHandler(userHandler.UpdateUser))
+	authRoute.POST("/users", router.NewGinHandler(userHandler.NewUser))
+	authRoute.GET("/users", router.NewGinHandler(userHandler.GetUser))
+	authRoute.DELETE("/users/:id", router.NewGinHandler(userHandler.DeleteUser))
+	authRoute.PATCH("/users/:id", router.NewGinHandler(userHandler.UpdateUser))
 
 	r.Run()
 }

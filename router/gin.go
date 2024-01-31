@@ -1,20 +1,11 @@
-package user
+package router
 
 import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/guutong/demo-gin/user"
 )
-
-type IContext interface {
-	BindJSON(interface{}) error
-	JSON(int, interface{})
-	Param(string) string
-	ParamInt(string) (int, error)
-
-	// from middleware
-	Name() string
-}
 
 type AppContext struct {
 	*gin.Context
@@ -45,7 +36,7 @@ func (c *AppContext) Name() string {
 	return c.Context.GetString("name")
 }
 
-func NewGinHandler(handler func(IContext)) gin.HandlerFunc {
+func NewGinHandler(handler func(user.IContext)) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		handler(NewAppContext(c))
 	}
