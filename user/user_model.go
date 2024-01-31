@@ -1,17 +1,10 @@
 package user
 
 import (
-	"database/sql"
-	"time"
+	"gorm.io/gorm"
 )
 
-type DeletedAt sql.NullTime
-
 type User struct {
-	ID        uint `gorm:"primarykey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt DeletedAt `gorm:"index"`
-
+	gorm.Model
 	Name string `json:"name" binding:"required"`
 }
